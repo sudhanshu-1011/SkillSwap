@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { motion } from "framer-motion";
 import Spinner from "react-bootstrap/Spinner";
-import { FiGithub, FiLinkedin, FiExternalLink, FiAward, FiCheckCircle, FiActivity } from "react-icons/fi";
+import { FiGithub, FiLinkedin, FiExternalLink, FiAward, FiCheckCircle, FiActivity, FiUser } from "react-icons/fi";
 import Box from "./Box";
 
 const Profile = () => {

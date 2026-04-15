@@ -24,15 +24,9 @@ const Discover = () => {
   });
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDiscoverData = async () => {
       try {
         setLoading(true);
-        const { data: userData } = await axios.get(`/user/registered/getDetails`);
-        if (userData && userData.data) {
-          setUser(userData.data);
-          localStorage.setItem("userInfo", JSON.stringify(userData.data));
-        }
-
         const { data: discoverData } = await axios.get("/user/discover");
         setUsers({
           perfectMatches: discoverData.data.perfectMatches || [],
@@ -48,8 +42,9 @@ const Discover = () => {
         setLoading(false);
       }
     };
-    fetchData();
+    fetchDiscoverData();
   }, []);
+
 
   const categories = [
     { name: "Perfect Matches", icon: <FiFilter />, key: "perfectMatches" },

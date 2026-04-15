@@ -1,5 +1,7 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import axios from "axios";
+
 
 const UserContext = createContext();
 
@@ -11,29 +13,41 @@ const UserContextProvider = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    const userInfoString = localStorage.getItem("userInfo");
-    if (userInfoString && userInfoString !== "undefined") {
+    const fetchUser = async () => {
       try {
-        const userInfo = JSON.parse(userInfoString);
-        setUser(userInfo);
+        const userInfoString = localStorage.getItem("userInfo");
+        if (userInfoString && userInfoString !== "undefined") {
+          const userInfo = JSON.parse(userInfoString);
+          setUser(userInfo);
+        } else {
+          // If no userInfo in localStorage, try fetching from backend (checks cookies)
+          const { data } = await axios.get("/user/registered/getDetails");
+          if (data?.data) {
+            setUser(data.data);
+            localStorage.setItem("userInfo", JSON.stringify(data.data));
+          }
+        }
       } catch (error) {
-        console.error("Error parsing userInfo:", error);
+        console.error("Auth check failed:", error);
         localStorage.removeItem("userInfo");
         setUser(null);
+        
+        const isPublic =
+          PUBLIC_PATHS.some((p) => location.pathname === p) ||
+          location.pathname.startsWith("/reset-password/") ||
+          location.pathname.startsWith("/profile/") ||
+          location.pathname.startsWith("/report/") ||
+          location.pathname.startsWith("/rating/");
+          
+        if (!isPublic) {
+          navigate("/login");
+        }
       }
-    } else {
-      setUser(null);
-      const isPublic =
-        PUBLIC_PATHS.some((p) => location.pathname === p) ||
-        location.pathname.startsWith("/reset-password/") ||
-        location.pathname.startsWith("/profile/") ||
-        location.pathname.startsWith("/report/") ||
-        location.pathname.startsWith("/rating/");
-      if (!isPublic) {
-        navigate("/login");
-      }
-    }
+    };
+
+    fetchUser();
   }, [location.pathname]);
+
 
   return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };

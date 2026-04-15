@@ -11,10 +11,12 @@ import "./Register.css";
 import Badge from "react-bootstrap/Badge";
 import { v4 as uuidv4 } from "uuid";
 import { useUser } from "../../util/UserContext";
+import { motion, AnimatePresence } from "framer-motion";
 
 const Register = () => {
+
   const navigate = useNavigate();
-  const { setUser } = useUser();
+  const { user, setUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [isOAuth, setIsOAuth] = useState(false);
@@ -48,6 +50,12 @@ const Register = () => {
   const [techStack, setTechStack] = useState([]);
 
   const [activeKey, setActiveKey] = useState("registration");
+
+  useEffect(() => {
+    if (user) {
+      navigate("/discover");
+    }
+  }, [user, navigate]);
 
   useEffect(() => {
     setLoading(true);
@@ -442,713 +450,463 @@ const Register = () => {
             onSelect={(k) => setActiveKey(k)}
           >
             <Tab eventKey="registration" title="Registration">
-              {/* Name */}
-              <div>
-                <label className="form-label fw-semibold text-muted small">Name</label>
-                <br />
-                <input
-                  type="text"
-                  name="name"
-                  onChange={handleInputChange}
-                  className="form-control mb-2"
-                  value={form.name}
-                  disabled={isOAuth}
-                />
-              </div>
-              {/* Email */}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Email
-                </label>
-                <br />
-                <input
-                  type="text"
-                  name="email"
-                  onChange={handleInputChange}
-                  className="form-control mb-2"
-                  value={form.email}
-                  disabled={isOAuth}
-                />
-              </div>
-              {/* Password */}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Password
-                </label>
-                <br />
-                <input
-                  type="password"
-                  name="password"
-                  onChange={handleInputChange}
-                  value={form.password}
-                  className="form-control mb-2"
-                  placeholder="Enter a strong password"
-                />
-              </div>
-              {/* Username */}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Username
-                </label>
-                <br />
-                <input
-                  type="text"
-                  name="username"
-                  onChange={handleInputChange}
-                  value={form.username}
-                  className="form-control mb-2"
-                  placeholder="Enter your username"
-                />
-              </div>
-              {/* Linkedin Profile Link*/}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Linkedin Link
-                </label>
-                <br />
-                <input
-                  type="text"
-                  name="linkedinLink"
-                  value={form.linkedinLink}
-                  onChange={handleInputChange}
-                  className="form-control mb-2"
-                  placeholder="Enter your Linkedin link"
-                />
-              </div>
-              {/* Github Profile Link*/}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Github Link
-                </label>
-                <br />
-                <input
-                  type="text"
-                  name="githubLink"
-                  value={form.githubLink}
-                  onChange={handleInputChange}
-                  className="form-control mb-2"
-                  placeholder="Enter your Github link"
-                />
-              </div>
-              {/* Portfolio Link */}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Portfolio Link
-                </label>
-                <br />
-                <input
-                  type="text"
-                  name="portfolioLink"
-                  value={form.portfolioLink}
-                  onChange={handleInputChange}
-                  className="form-control mb-2"
-                  placeholder="Enter your portfolio link"
-                />
-              </div>
-              {/* Skills Proficient At */}
-              <div>
-                <label className="mt-3 form-label fw-semibold text-muted small">
-                  Skills Proficient At
-                </label>
-                <br />
-                <Form.Select
-                  aria-label="Default select example"
-                  value={skillsProficientAt}
-                  onChange={(e) => setSkillsProficientAt(e.target.value)}
-                >
-                  <option>Select some skill</option>
-                  {skills.map((skill, index) => (
-                    <option key={index} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
-                </Form.Select>
-                {form.skillsProficientAt.length > 0 && (
-                  <div>
-                    {form.skillsProficientAt.map((skill, index) => (
-                      <Badge
-                        key={index}
-                        bg="secondary"
-                        className="ms-2 mt-2"
-                        style={{ cursor: "pointer" }}
-                        onClick={(event) => handleRemoveSkill(event, "skills_proficient_at")}
-                      >
-                        <div className="span d-flex p-1 fs-7 ">{skill} &#10005;</div>
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                <button className="btn btn-primary mt-3 ms-1" name="skill_proficient_at" onClick={handleAddSkill}>
-                  Add Skill
-                </button>
-              </div>
-              {/* Skills to learn */}
-              <div>
-                <label style={{ color: "var(--primary)", marginTop: "20px" }}>Skills To Learn</label>
-                <br />
-                <Form.Select
-                  aria-label="Default select example"
-                  value={skillsToLearn}
-                  onChange={(e) => setSkillsToLearn(e.target.value)}
-                >
-                  <option>Select some skill</option>
-                  {skills.map((skill, index) => (
-                    <option key={index} value={skill}>
-                      {skill}
-                    </option>
-                  ))}
-                </Form.Select>
-                {form.skillsToLearn.length > 0 && (
-                  <div>
-                    {form.skillsToLearn.map((skill, index) => (
-                      <Badge
-                        key={index}
-                        bg="secondary"
-                        className="ms-2 mt-2 "
-                        style={{ cursor: "pointer" }}
-                        onClick={(event) => handleRemoveSkill(event, "skills_to_learn")}
-                      >
-                        <div className="span d-flex p-1 fs-7 ">{skill} &#10005;</div>
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                <button className="btn btn-primary mt-3 ms-1" name="skill_to_learn" onClick={handleAddSkill}>
-                  Add Skill
-                </button>
-              </div>
-              <div className="row m-auto d-flex justify-content-center mt-3">
-                <button className="btn btn-warning" onClick={handleSaveRegistration} disabled={saveLoading}>
-                  {saveLoading ? <Spinner animation="border" variant="primary" /> : "Save"}
-                </button>
-                <button onClick={handleNext} className="mt-2 btn btn-primary">
-                  Next
-                </button>
-              </div>
-            </Tab>
-            <Tab eventKey="education" title="Education">
-              {form.education.map((edu, index) => (
-                <div className="border border-dark rounded-1 p-3 m-1" key={edu.id}>
-                  {index !== 0 && (
-                    <span className="w-100 d-flex justify-content-end">
-                      <button className="w-25" onClick={(e) => handleRemoveEducation(e, edu.id)}>
-                        cross
-                      </button>
-                    </span>
-                  )}
-                  <label className="form-label fw-semibold text-muted small">Institution Name</label>
-                  <br />
-                  <input
-                    type="text"
-                    name="institution"
-                    value={edu.institution}
-                    onChange={(e) => handleEducationChange(e, index)}
-                    style={{
-                      borderRadius: "5px",
-                      border: "1px solid var(--primary)",
-                      padding: "5px",
-                      width: "100%",
-                    }}
-                    placeholder="Enter your institution name"
-                  />
-                  <label className="mt-2 form-label fw-semibold text-muted small">
-                    Degree
-                  </label>
-                  <br />
-                  <input
-                    type="text"
-                    name="degree"
-                    value={edu.degree}
-                    onChange={(e) => handleEducationChange(e, index)}
-                    style={{
-                      borderRadius: "5px",
-                      border: "1px solid var(--primary)",
-                      padding: "5px",
-                      width: "100%",
-                    }}
-                    placeholder="Enter your degree"
-                  />
-                  <label className="mt-2 form-label fw-semibold text-muted small">
-                    Grade/Percentage
-                  </label>
-                  <br />
-                  <input
-                    type="number"
-                    name="score"
-                    value={edu.score}
-                    onChange={(e) => handleEducationChange(e, index)}
-                    style={{
-                      borderRadius: "5px",
-                      border: "1px solid var(--primary)",
-                      padding: "5px",
-                      width: "100%",
-                    }}
-                    placeholder="Enter your grade/percentage"
-                  />
-                  <div className="row w-100">
-                    <div className="col-md-6">
-                      <label className="mt-2 form-label fw-semibold text-muted small">
-                        Start Date
-                      </label>
-                      <br />
-                      <input
-                        type="date"
-                        name="startDate"
-                        value={edu.startDate ? new Date(edu.startDate).toISOString().split("T")[0] : ""}
-                        onChange={(e) => handleEducationChange(e, index)}
-                        style={{
-                          borderRadius: "5px",
-                          border: "1px solid var(--primary)",
-                          padding: "5px",
-                          width: "100%",
-                        }}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <label className="mt-2 form-label fw-semibold text-muted small">
-                        End Date
-                      </label>
-                      <br />
-                      <input
-                        type="date"
-                        name="endDate"
-                        value={edu.endDate ? new Date(edu.endDate).toISOString().split("T")[0] : ""}
-                        onChange={(e) => handleEducationChange(e, index)}
-                        style={{
-                          borderRadius: "5px",
-                          border: "1px solid var(--primary)",
-                          padding: "5px",
-                          width: "100%",
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <label className="mt-2 form-label fw-semibold text-muted small">
-                    Description
-                  </label>
-                  <br />
-                  <input
-                    type="text"
-                    name="description"
-                    value={edu.description}
-                    onChange={(e) => handleEducationChange(e, index)}
-                    style={{
-                      borderRadius: "5px",
-                      border: "1px solid var(--primary)",
-                      padding: "5px",
-                      width: "100%",
-                    }}
-                    placeholder="Enter your exp or achievements"
-                  />
-                </div>
-              ))}
-              <div className="row my-2 d-flex justify-content-center">
-                <button
-                  className="btn btn-primary w-50"
-                  onClick={() => {
-                    setForm((prevState) => ({
-                      ...prevState,
-                      education: [
-                        ...prevState.education,
-                        {
-                          id: uuidv4(),
-                          institution: "",
-                          degree: "",
-                          startDate: "",
-                          endDate: "",
-                          score: "",
-                          description: "",
-                        },
-                      ],
-                    }));
-                  }}
-                >
-                  Add Education
-                </button>
-              </div>
-              <div className="row m-auto d-flex justify-content-center mt-3">
-                <button className="btn btn-warning" onClick={handleSaveEducation} disabled={saveLoading}>
-                  {saveLoading ? <Spinner animation="border" variant="primary" /> : "Save"}
-                </button>
-                <button onClick={handleNext} className="mt-2 btn btn-primary">
-                  Next
-                </button>
-              </div>
-            </Tab>
-            <Tab eventKey="longer-tab" title="Additional">
-              <div>
-                <label style={{ color: "var(--primary)", marginTop: "20px" }}>Bio (Max 500 Character)</label>
-                <br />
-                <textarea
-                  name="bio"
-                  value={form.bio}
-                  onChange={handleInputChange}
-                  className="form-control mb-3"
-                  placeholder="Enter your bio"
-                ></textarea>
-              </div>
-              <div className="">
-                <label className="form-label fw-semibold text-muted small">Projects</label>
-
-                {form.projects.map((project, index) => (
-                  <div className="border border-dark rounded-1 p-3 m-1" key={project.id}>
-                    <span className="w-100 d-flex justify-content-end">
-                      <button
-                        className="w-25"
-                        onClick={() => {
-                          setForm((prevState) => ({
-                            ...prevState,
-                            projects: prevState.projects.filter((item) => item.id !== project.id),
-                          }));
-                        }}
-                      >
-                        cross
-                      </button>
-                    </span>
-                    <label className="form-label fw-semibold text-muted small">Title</label>
-                    <br />
+              <div className="animate-fade-in-up">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Full Name</label>
                     <input
                       type="text"
-                      name="title"
-                      value={project.title}
-                      onChange={(e) => handleAdditionalChange(e, index)}
-                      style={{
-                        borderRadius: "5px",
-                        border: "1px solid var(--primary)",
-                        padding: "5px",
-                        width: "100%",
-                      }}
-                      placeholder="Enter your project title"
+                      name="name"
+                      onChange={handleInputChange}
+                      className="form-control"
+                      value={form.name}
+                      disabled={isOAuth}
+                      placeholder="John Doe"
                     />
-                    <label className="mt-2 form-label fw-semibold text-muted small">
-                      Tech Stack
-                    </label>
-                    <br />
-                    <Form.Select
-                      aria-label="Default select example"
-                      value={techStack[index]}
-                      onChange={(e) => {
-                        setTechStack((prevState) => prevState.map((item, i) => (i === index ? e.target.value : item)));
-                      }}
-                    >
-                      <option>Select some Tech Stack</option>
-                      {skills.map((skill, index) => (
-                        <option key={index} value={skill}>
-                          {skill}
-                        </option>
-                      ))}
-                    </Form.Select>
-                    {techStack[index].length > 0 && (
-                      <div>
-                        {form.projects[index].techStack.map((skill, i) => (
-                          <Badge
-                            key={i}
-                            bg="secondary"
-                            className="ms-2 mt-2"
-                            style={{ cursor: "pointer" }}
-                            onClick={(e) => {
-                              setForm((prevState) => ({
-                                ...prevState,
-                                projects: prevState.projects.map((item, i) =>
-                                  i === index
-                                    ? { ...item, techStack: item.techStack.filter((item) => item !== skill) }
-                                    : item
-                                ),
-                              }));
-                            }}
-                          >
-                            <div className="span d-flex p-1 fs-7 ">{skill} &#10005;</div>
-                          </Badge>
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Email Address</label>
+                    <input
+                      type="email"
+                      name="email"
+                      onChange={handleInputChange}
+                      className="form-control"
+                      value={form.email}
+                      disabled={isOAuth}
+                      placeholder="john@example.com"
+                    />
+                  </div>
+                  {!isOAuth && (
+                    <div className="col-md-6">
+                      <label className="form-label">Password</label>
+                      <input
+                        type="password"
+                        name="password"
+                        onChange={handleInputChange}
+                        value={form.password}
+                        className="form-control"
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  )}
+                  <div className={`${isOAuth ? 'col-12' : 'col-md-6'}`}>
+                    <label className="form-label">Username</label>
+                    <input
+                      type="text"
+                      name="username"
+                      onChange={handleInputChange}
+                      value={form.username}
+                      className="form-control"
+                      placeholder="johndoe123"
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">LinkedIn profile</label>
+                    <input
+                      type="text"
+                      name="linkedinLink"
+                      value={form.linkedinLink}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      placeholder="https://linkedin.com/in/..."
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">GitHub Profile</label>
+                    <input
+                      type="text"
+                      name="githubLink"
+                      value={form.githubLink}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      placeholder="https://github.com/..."
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label className="form-label">Portfolio Website</label>
+                    <input
+                      type="text"
+                      name="portfolioLink"
+                      value={form.portfolioLink}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      placeholder="https://yourportfolio.com"
+                    />
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label">Skills You Can Teach</label>
+                    <div className="d-flex gap-2">
+                      <Form.Select
+                        value={skillsProficientAt}
+                        onChange={(e) => setSkillsProficientAt(e.target.value)}
+                        className="form-select"
+                      >
+                        <option>Select a skill</option>
+                        {skills.map((skill, index) => (
+                          <option key={index} value={skill}>{skill}</option>
                         ))}
-                      </div>
+                      </Form.Select>
+                      <button className="btn btn-primary" name="skill_proficient_at" onClick={handleAddSkill}>Add</button>
+                    </div>
+                    <div className="d-flex flex-wrap gap-2 mt-2">
+                      <AnimatePresence>
+                        {form.skillsProficientAt.map((skill, index) => (
+                          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} key={index}>
+                            <Badge
+                              bg="secondary"
+                              style={{ cursor: "pointer" }}
+                              onClick={(event) => handleRemoveSkill(event, "skills_proficient_at")}
+                            >
+                              {skill} &#10005;
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+
+                  <div className="col-md-6">
+                    <label className="form-label">Skills You Want To Learn</label>
+                    <div className="d-flex gap-2">
+                      <Form.Select
+                        value={skillsToLearn}
+                        onChange={(e) => setSkillsToLearn(e.target.value)}
+                        className="form-select"
+                      >
+                        <option>Select a skill</option>
+                        {skills.map((skill, index) => (
+                          <option key={index} value={skill}>{skill}</option>
+                        ))}
+                      </Form.Select>
+                      <button className="btn btn-primary" name="skill_to_learn" onClick={handleAddSkill}>Add</button>
+                    </div>
+                    <div className="d-flex flex-wrap gap-2 mt-2">
+                      <AnimatePresence>
+                        {form.skillsToLearn.map((skill, index) => (
+                          <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} key={index}>
+                            <Badge
+                              bg="secondary"
+                              style={{ cursor: "pointer" }}
+                              onClick={(event) => handleRemoveSkill(event, "skills_to_learn")}
+                            >
+                              {skill} &#10005;
+                            </Badge>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-actions mt-5">
+                  <button className="btn btn-warning px-5" onClick={handleSaveRegistration} disabled={saveLoading}>
+                    {saveLoading ? <Spinner animation="border" size="sm" /> : "Save Progress"}
+                  </button>
+                  <button onClick={handleNext} className="btn btn-primary px-5">
+                    Next Step
+                  </button>
+                </div>
+              </div>
+            </Tab>
+
+            <Tab eventKey="education" title="Education">
+              <div className="animate-fade-in-up">
+                {form.education.map((edu, index) => (
+                  <div className="edu-card" key={edu.id}>
+                    {index !== 0 && (
+                      <button 
+                        className="edu-card-remove position-absolute top-0 end-0 m-3" 
+                        onClick={(e) => handleRemoveEducation(e, edu.id)}
+                      >
+                        Remove
+                      </button>
                     )}
-                    <button
-                      className="btn btn-primary mt-3 ms-1"
-                      name="tech_stack"
-                      onClick={(e) => {
-                        if (techStack[index] === "Select some Tech Stack") {
-                          toast.error("Select a tech stack to add");
-                          return;
-                        }
-                        if (form.projects[index].techStack.includes(techStack[index])) {
-                          toast.error("Tech Stack already added");
-                          return;
-                        }
-                        setForm((prevState) => ({
-                          ...prevState,
-                          projects: prevState.projects.map((item, i) =>
-                            i === index ? { ...item, techStack: [...item.techStack, techStack[index]] } : item
-                          ),
-                        }));
-                      }}
-                    >
-                      Add Tech Stack
-                    </button>
-                    <div className="row">
+                    <div className="row g-3">
+                      <div className="col-12">
+                        <label className="form-label">Institution Name</label>
+                        <input
+                          type="text"
+                          name="institution"
+                          value={edu.institution}
+                          onChange={(e) => handleEducationChange(e, index)}
+                          className="form-control"
+                          placeholder="University or School name"
+                        />
+                      </div>
                       <div className="col-md-6">
-                        <label className="mt-2 form-label fw-semibold text-muted small">
-                          Start Date
-                        </label>
-                        <br />
+                        <label className="form-label">Degree</label>
+                        <input
+                          type="text"
+                          name="degree"
+                          value={edu.degree}
+                          onChange={(e) => handleEducationChange(e, index)}
+                          className="form-control"
+                          placeholder="e.g. B.Tech Computer Science"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Grade / Percentage</label>
+                        <input
+                          type="number"
+                          name="score"
+                          value={edu.score}
+                          onChange={(e) => handleEducationChange(e, index)}
+                          className="form-control"
+                          placeholder="Score"
+                        />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Start Date</label>
                         <input
                           type="date"
                           name="startDate"
-                          value={project.startDate ? new Date(project.startDate).toISOString().split("T")[0] : ""}
-                          onChange={(e) => handleAdditionalChange(e, index)}
-                          style={{
-                            borderRadius: "5px",
-                            border: "1px solid var(--primary)",
-                            padding: "5px",
-                            width: "100%",
-                          }}
+                          value={edu.startDate ? new Date(edu.startDate).toISOString().split("T")[0] : ""}
+                          onChange={(e) => handleEducationChange(e, index)}
+                          className="form-control"
                         />
                       </div>
                       <div className="col-md-6">
-                        <label className="mt-2 form-label fw-semibold text-muted small">
-                          End Date
-                        </label>
-                        <br />
+                        <label className="form-label">End Date</label>
                         <input
                           type="date"
                           name="endDate"
-                          value={project.endDate ? new Date(project.endDate).toISOString().split("T")[0] : ""}
-                          onChange={(e) => handleAdditionalChange(e, index)}
-                          style={{
-                            borderRadius: "5px",
-                            border: "1px solid var(--primary)",
-                            padding: "5px",
-                            width: "100%",
-                          }}
+                          value={edu.endDate ? new Date(edu.endDate).toISOString().split("T")[0] : ""}
+                          onChange={(e) => handleEducationChange(e, index)}
+                          className="form-control"
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Description / Achievements</label>
+                        <textarea
+                          name="description"
+                          value={edu.description}
+                          onChange={(e) => handleEducationChange(e, index)}
+                          className="form-control"
+                          rows="2"
+                          placeholder="Briefly describe your experience or honors"
                         />
                       </div>
                     </div>
-                    <label className="mt-2 form-label fw-semibold text-muted small">
-                      Project Link
-                    </label>
-                    <br />
-                    <input
-                      type="text"
-                      name="projectLink"
-                      value={project.projectLink}
-                      onChange={(e) => handleAdditionalChange(e, index)}
-                      style={{
-                        borderRadius: "5px",
-                        border: "1px solid var(--primary)",
-                        padding: "5px",
-                        width: "100%",
-                      }}
-                      placeholder="Enter your project link"
-                    />
-
-                    <label className="mt-2 form-label fw-semibold text-muted small">
-                      Description
-                    </label>
-                    <br />
-                    <input
-                      type="text"
-                      name="description"
-                      value={project.description}
-                      onChange={(e) => handleAdditionalChange(e, index)}
-                      style={{
-                        borderRadius: "5px",
-                        border: "1px solid var(--primary)",
-                        padding: "5px",
-                        width: "100%",
-                      }}
-                      placeholder="Enter your project description"
-                    />
                   </div>
                 ))}
-
-                <div className="row my-2 d-flex justify-content-center">
+                
+                <div className="text-center mt-4">
                   <button
-                    className="btn btn-primary w-50"
+                    className="btn btn-secondary w-100"
                     onClick={() => {
-                      setTechStack((prevState) => {
-                        return [...prevState, "Select some Tech Stack"];
-                      });
                       setForm((prevState) => ({
                         ...prevState,
-                        projects: [
-                          ...prevState.projects,
+                        education: [
+                          ...prevState.education,
                           {
                             id: uuidv4(),
-                            title: "",
-                            techStack: [],
+                            institution: "",
+                            degree: "",
                             startDate: "",
                             endDate: "",
-                            projectLink: "",
+                            score: "",
                             description: "",
                           },
                         ],
                       }));
                     }}
                   >
-                    Add Project
+                    + Add More Education
+                  </button>
+                </div>
+
+                <div className="form-actions mt-5">
+                  <button className="btn btn-warning px-5" onClick={handleSaveEducation} disabled={saveLoading}>
+                    {saveLoading ? <Spinner animation="border" size="sm" /> : "Save Progress"}
+                  </button>
+                  <button onClick={handleNext} className="btn btn-primary px-5">
+                    Next Step
                   </button>
                 </div>
               </div>
-              <div className="row m-auto d-flex justify-content-center mt-3">
-                <button className="btn btn-warning" onClick={handleSaveAdditional} disabled={saveLoading}>
-                  {saveLoading ? <Spinner animation="border" variant="primary" /> : "Save"}
-                </button>
-                <button onClick={handleNext} className="mt-2 btn btn-primary">
-                  Next
-                </button>
-              </div>
             </Tab>
-            <Tab eventKey="Preview" title="Confirm Details">
-              <div>
-                <h3 className="w-100 text-center fw-bold text-gradient mb-4">
-                  Preview of the Form
-                </h3>
-                <div className="previewForm" style={{ fontFamily: "Montserrat, sans-serif", color: "#2d2d2d", marginBottom: "20px" }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link m-sm-0"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Name:</span>
-                    <span style={{ flex: 2 }}>{form.name || "Yet to be filled"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Email ID:</span>
-                    <span style={{ flex: 2 }}>{form.email || "Yet to be filled"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Username:</span>
-                    <span style={{ flex: 2 }}>{form.username || "Yet to be filled"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Portfolio Link:</span>
-                    <span style={{ flex: 2 }}>{form.portfolioLink || "Yet to be filled"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Github Link:</span>
-                    <span style={{ flex: 2 }}>{form.githubLink || "Yet to be filled"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      flexWrap: "wrap",
-                      marginBottom: "10px",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Linkedin Link:</span>
-                    <span
-                      style={{
-                        width: "70vw",
-                        alignItems: "center",
-                        flex: 2,
-                        overflow: "hidden",
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        marginBottom: "1.5rem",
+
+            <Tab eventKey="longer-tab" title="Additional">
+              <div className="animate-fade-in-up">
+                <div className="mb-4">
+                  <label className="form-label">Professional Bio (Max 500 characters)</label>
+                  <textarea
+                    name="bio"
+                    value={form.bio}
+                    onChange={handleInputChange}
+                    className="form-control"
+                    placeholder="Tell us about your journey and what you're passionate about..."
+                    rows="4"
+                  />
+                  <div className="text-end mt-1 small text-muted">{form.bio.length}/500</div>
+                </div>
+
+                <div className="mb-3 d-flex justify-content-between align-items-center">
+                  <h5 className="mb-0">Projects & Portfolio</h5>
+                </div>
+
+                {form.projects.map((project, index) => (
+                  <div className="edu-card" key={project.id}>
+                    <button 
+                      className="edu-card-remove position-absolute top-0 end-0 m-3" 
+                      onClick={() => {
+                        setForm(prev => ({
+                          ...prev,
+                          projects: prev.projects.filter(p => p.id !== project.id)
+                        }));
                       }}
                     >
-                      {form.linkedinLink || "Yet to be filled"}
-                    </span>
+                      Remove
+                    </button>
+                    <div className="row g-3">
+                      <div className="col-12">
+                        <label className="form-label">Project Title</label>
+                        <input
+                          type="text"
+                          name="title"
+                          value={project.title}
+                          onChange={(e) => handleAdditionalChange(e, index)}
+                          className="form-control"
+                          placeholder="e.g. SkillSwap Platform"
+                        />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Tech Stack</label>
+                        <div className="d-flex gap-2">
+                          <Form.Select
+                            value={techStack[index]}
+                            onChange={(e) => {
+                              const newTS = [...techStack];
+                              newTS[index] = e.target.value;
+                              setTechStack(newTS);
+                            }}
+                            className="form-select"
+                          >
+                            <option>Select a tech</option>
+                            {skills.map((s, i) => <option key={i} value={s}>{s}</option>)}
+                          </Form.Select>
+                          <button 
+                            className="btn btn-primary"
+                            onClick={() => {
+                              if (!techStack[index] || techStack[index] === "Select a tech") return;
+                              setForm(prev => ({
+                                ...prev,
+                                projects: prev.projects.map((p, i) => 
+                                  i === index ? { ...p, techStack: [...new Set([...p.techStack, techStack[index]])] } : p
+                                )
+                              }));
+                            }}
+                          >
+                            Add
+                          </button>
+                        </div>
+                        <div className="d-flex flex-wrap gap-2 mt-2">
+                          {project.techStack.map((ts, i) => (
+                            <Badge key={i} bg="secondary" style={{ cursor: 'pointer' }} onClick={() => {
+                               setForm(prev => ({
+                                 ...prev,
+                                 projects: prev.projects.map((p, pIdx) => 
+                                   pIdx === index ? { ...p, techStack: p.techStack.filter(item => item !== ts) } : p
+                                 )
+                               }));
+                            }}>
+                              {ts} &#10005;
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Start Date</label>
+                        <input type="date" name="startDate" value={project.startDate ? new Date(project.startDate).toISOString().split("T")[0] : ""} onChange={(e) => handleAdditionalChange(e, index)} className="form-control" />
+                      </div>
+                      <div className="col-md-6">
+                        <label className="form-label">End Date</label>
+                        <input type="date" name="endDate" value={project.endDate ? new Date(project.endDate).toISOString().split("T")[0] : ""} onChange={(e) => handleAdditionalChange(e, index)} className="form-control" />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Project Link</label>
+                        <input type="text" name="projectLink" value={project.projectLink} onChange={(e) => handleAdditionalChange(e, index)} className="form-control" placeholder="https://..." />
+                      </div>
+                      <div className="col-12">
+                        <label className="form-label">Brief Description</label>
+                        <textarea name="description" value={project.description} onChange={(e) => handleAdditionalChange(e, index)} className="form-control" rows="2" />
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Skills Proficient At:</span>
-                    <span style={{ flex: 2 }}>{form.skillsProficientAt.join(", ") || "Yet to be filled"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Skills To Learn:</span>
-                    <span style={{ flex: 2 }}>{form.skillsToLearn.join(", ") || "Yet to be filled"}</span>
-                  </div>
+                ))}
 
-                  <div
-                    style={{
-                      display: "flex",
-                      width: "70vw",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: "1.5rem",
-                    }}
-                    className="link"
-                  >
-                    <span className="fw-semibold text-muted" style={{ flex: 1 }}>Bio:</span>
-                    <span style={{ flex: 2 }}>{form.bio || "Yet to be filled"}</span>
+                <button
+                  className="btn btn-secondary w-100 mt-2"
+                  onClick={() => {
+                     setTechStack(prev => [...prev, "Select a tech"]);
+                     setForm(prev => ({
+                       ...prev,
+                       projects: [...prev.projects, { id: uuidv4(), title: "", techStack: [], startDate: "", endDate: "", projectLink: "", description: "" }]
+                     }));
+                  }}
+                >
+                  + Add Project
+                </button>
+
+                <div className="form-actions mt-5">
+                  <button className="btn btn-warning px-5" onClick={handleSaveAdditional} disabled={saveLoading}>
+                    {saveLoading ? <Spinner animation="border" size="sm" /> : "Save Progress"}
+                  </button>
+                  <button onClick={handleNext} className="btn btn-primary px-5">
+                    Next: Preview
+                  </button>
+                </div>
+              </div>
+            </Tab>
+
+            <Tab eventKey="Preview" title="Confirm">
+              <div className="animate-fade-in-up p-2">
+                <h4 className="text-center mb-4 text-gradient">Review Your Profile</h4>
+                
+                <div className="glass-card p-4 mb-4">
+                  <div className="row g-4">
+                    {[
+                      { label: "Name", value: form.name },
+                      { label: "Username", value: form.username },
+                      { label: "Email", value: form.email },
+                      { label: "LinkedIn", value: form.linkedinLink },
+                      { label: "GitHub", value: form.githubLink },
+                      { label: "Portfolio", value: form.portfolioLink },
+                    ].map((item, i) => (
+                      <div className="col-md-6" key={i}>
+                        <div className="small text-muted text-uppercase fw-bold mb-1">{item.label}</div>
+                        <div className="text-truncate">{item.value || <span className="text-dark italic">Not provided</span>}</div>
+                      </div>
+                    ))}
+                    <div className="col-12">
+                      <div className="small text-muted text-uppercase fw-bold mb-1">Bio</div>
+                      <div style={{ fontSize: '0.95rem' }}>{form.bio || <span className="text-dark">No bio provided.</span>}</div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="small text-muted text-uppercase fw-bold mb-2">Teaching</div>
+                      <div className="d-flex flex-wrap gap-2">
+                        {form.skillsProficientAt.map((s, i) => <Badge key={i} bg="secondary">{s}</Badge>)}
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="small text-muted text-uppercase fw-bold mb-2">Learning</div>
+                      <div className="d-flex flex-wrap gap-2">
+                        {form.skillsToLearn.map((s, i) => <Badge key={i} bg="secondary">{s}</Badge>)}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="row">
+
+                <div className="form-actions justify-content-center">
                   <button
                     onClick={handleSubmit}
-                    style={{
-                      backgroundColor: "var(--primary)",
-                      color: "white",
-                      padding: "10px 20px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                    className="w-50 d-flex m-auto text-center align-content-center justify-content-center"
+                    className="btn btn-primary px-5 py-3 fs-5"
+                    disabled={saveLoading}
+                    style={{ minWidth: '250px' }}
                   >
-                    {saveLoading ? <Spinner animation="border" variant="primary" /> : "Submit"}
+                    {saveLoading ? <Spinner animation="border" size="sm" className="me-2" /> : null}
+                    Confirm & Complete
                   </button>
                 </div>
               </div>
