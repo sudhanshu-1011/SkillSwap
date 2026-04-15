@@ -42,9 +42,10 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
   const existingUser = await User.findOne({ email: req.user._json.email });
 
   if (existingUser) {
-    const jwtToken = generateJWTToken_username(existingUser);
-    const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-    res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
+  const jwtToken = generateJWTToken_username(existingUser);
+  const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: isProduction, sameSite: isProduction ? "none" : "lax" });
     return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/discover`);
   }
 
@@ -58,8 +59,9 @@ export const handleGoogleLoginCallback = asyncHandler(async (req, res) => {
     });
   }
   const jwtToken = generateJWTToken_email(unregisteredUser);
-  const expiryDate = new Date(Date.now() + 0.5 * 60 * 60 * 1000);
-  res.cookie("accessTokenRegistration", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
+  const expiryDate = new Date(Date.now() + 2 * 60 * 60 * 1000);
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("accessTokenRegistration", jwtToken, { httpOnly: true, expires: expiryDate, secure: isProduction, sameSite: isProduction ? "none" : "lax" });
   return res.redirect(`${process.env.FRONTEND_URL || "http://localhost:5173"}/register`);
 });
 
@@ -72,7 +74,7 @@ export const handleLogout = (req, res) => {
 // --- Standard Email/Password Auth Controllers ---
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, username, skillsProficientAt, skillsToLearn } = req.body;
+  const { name, email, password, username, skillsProficientAt, skillsToLearn, education, bio, projects, linkedinLink, githubLink, portfolioLink } = req.body;
   
   if ([name, email, password, username].some(f => !f?.trim())) {
     throw new ApiError(400, "Name, Email, Password, and Username are required");
@@ -91,7 +93,13 @@ export const registerUser = asyncHandler(async (req, res) => {
     username,
     password: hashedPassword,
     skillsProficientAt: skillsProficientAt || [],
-    skillsToLearn: skillsToLearn || []
+    skillsToLearn: skillsToLearn || [],
+    education: education || [],
+    bio: bio || "",
+    projects: projects || [],
+    linkedinLink: linkedinLink || "",
+    githubLink: githubLink || "",
+    portfolioLink: portfolioLink || ""
   });
 
   const createdUser = await User.findById(user._id).select("-password -forgotPasswordToken -forgotPasswordTokenExpiry");
@@ -125,8 +133,9 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 
   const jwtToken = generateJWTToken_username(user);
-  const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-  res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
+  const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: isProduction, sameSite: isProduction ? "none" : "lax" });
 
   const loggedInUser = await User.findById(user._id).select("-password -forgotPasswordToken -forgotPasswordTokenExpiry");
 

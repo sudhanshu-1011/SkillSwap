@@ -7,7 +7,7 @@ const generateJWTToken_email = (user) => {
     id: user._id,
     email: user.email,
   };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }); // Example expiration time of 1 hour
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
 const generateJWTToken_username = (user) => {
@@ -17,7 +17,7 @@ const generateJWTToken_username = (user) => {
     id: user._id,
     username: user.username,
   };
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }); // Example expiration time of 1 hour
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
 
 export { generateJWTToken_email, generateJWTToken_username };

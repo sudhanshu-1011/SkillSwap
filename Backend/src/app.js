@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import passport from "passport";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 
@@ -27,6 +28,22 @@ app.use(function (req, res, next) {
 // Passport middleware
 app.use(passport.initialize());
 
+// Rate limiters
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  message: { success: false, message: "Too many requests, please try again later." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const strictLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 10,
+  message: { success: false, message: "Too many requests, please try again in an hour." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // Importing routes
 import userRouter from "./routes/user.routes.js";
 import authRouter from "./routes/auth.routes.js";
@@ -38,12 +55,12 @@ import ratingRouter from "./routes/rating.routes.js";
 
 // Using routes
 app.use("/user", userRouter);
-app.use("/auth", authRouter);
+app.use("/auth", authLimiter, authRouter);
 app.use("/chat", chatRouter);
 app.use("/message", messageRouter);
 app.use("/request", requestRouter);
-app.use("/report", reportRouter);
-app.use("/rating", ratingRouter);
+app.use("/report", strictLimiter, reportRouter);
+app.use("/rating", strictLimiter, ratingRouter);
 
 // Error middleware
 app.use((err, req, res, next) => {

@@ -149,7 +149,7 @@ export const saveAddUnRegisteredUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Bio should be less than 500 characters");
   }
 
-  if (projects.size > 0) {
+  if (projects.length > 0) {
     projects.forEach((project) => {
       if (!project.title || !project.description || !project.projectLink || !project.startDate || !project.endDate) {
         throw new ApiError(400, "Please provide all the details");
@@ -172,7 +172,7 @@ export const saveAddUnRegisteredUser = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, user, "User details saved successfully"));
 });
 
-export const registerUser = async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
   console.log("\n******** Inside registerUser function ********");
   // First check if the user is already registered
   // if the user is already registerd than send a message that the user is already registered
@@ -235,7 +235,7 @@ export const registerUser = async (req, res) => {
   if (bio.length > 500) {
     throw new ApiError(400, "Bio should be less than 500 characters");
   }
-  if (projects.size > 0) {
+  if (projects.length > 0) {
     projects.forEach((project) => {
       if (!project.title || !project.description || !project.projectLink || !project.startDate || !project.endDate) {
         throw new ApiError(400, "Please provide all the details");
@@ -282,11 +282,13 @@ export const registerUser = async (req, res) => {
   await UnRegisteredUser.findOneAndDelete({ email: email });
 
   const jwtToken = generateJWTToken_username(newUser);
-  const expiryDate = new Date(Date.now() + 1 * 60 * 60 * 1000);
-  res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: false });
+  const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: isProduction, sameSite: isProduction ? "none" : "lax" });
   res.clearCookie("accessTokenRegistration");
   return res.status(200).json(new ApiResponse(200, newUser, "NewUser registered successfully"));
-};
+});
+
 
 export const saveRegRegisteredUser = asyncHandler(async (req, res) => {
   console.log("******** Inside saveRegRegisteredUser Function *******");
@@ -382,7 +384,7 @@ export const saveAddRegisteredUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Bio should be less than 500 characters");
   }
 
-  if (projects.size > 0) {
+  if (projects.length > 0) {
     projects.forEach((project) => {
       if (!project.title || !project.description || !project.projectLink || !project.startDate || !project.endDate) {
         throw new ApiError(400, "Please provide all the details");
@@ -521,7 +523,17 @@ export const uploadPic = asyncHandler(async (req, res) => {
 export const discoverUsers = asyncHandler(async (req, res) => {
   const webDevSkills = ["HTML", "CSS", "JavaScript", "React", "Angular", "Vue", "Node.js", "Express", "MongoDB", "SQL", "NoSQL"];
   const machineLearningSkills = ["Python", "Natural Language Processing", "Deep Learning", "PyTorch", "Machine Learning"];
-  const allUsers = await User.find({ username: { $ne: req.user.username } });
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  const totalUsers = await User.countDocuments({ username: { $ne: req.user.username } });
+  const allUsers = await User.find({ username: { $ne: req.user.username } })
+    .select("name username picture skillsProficientAt skillsToLearn bio rating")
+    .skip(skip)
+    .limit(limit);
+
   if (!allUsers) throw new ApiError(500, "Error in fetching users");
   const perfectMatches = [], forYou = [], webDevUsers = [], mlUsers = [], others = [];
   const currentUserToLearn = req.user.skillsToLearn.map(s => s.toLowerCase());
@@ -538,7 +550,10 @@ export const discoverUsers = asyncHandler(async (req, res) => {
     else if (userProficient.some(s => machineLearningSkills.map(ms => ms.toLowerCase()).includes(s)) && mlUsers.length < 5) mlUsers.push(u);
     else if (others.length < 5) others.push(u);
   });
-  return res.status(200).json(new ApiResponse(200, { perfectMatches, forYou, webDev: webDevUsers, ml: mlUsers, others }, "Discovery results fetched successfully"));
+  return res.status(200).json(new ApiResponse(200, {
+    perfectMatches, forYou, webDev: webDevUsers, ml: mlUsers, others,
+    pagination: { page, limit, totalUsers, totalPages: Math.ceil(totalUsers / limit) }
+  }, "Discovery results fetched successfully"));
 });
 
 
