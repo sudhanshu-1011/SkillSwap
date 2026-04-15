@@ -2,8 +2,15 @@ import dotenv from "dotenv";
 import connectDB from "./config/connectDB.js";
 import { app } from "./app.js";
 import { Server } from "socket.io";
+import { validateEnv } from "./config/env.validation.js";
 
-dotenv.config();
+dotenv.config({
+  path: "./.env",
+  override: true,
+});
+
+
+validateEnv();
 
 const port = process.env.PORT || 8000;
 

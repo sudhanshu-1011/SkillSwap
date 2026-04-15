@@ -80,10 +80,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Name, Email, Password, and Username are required");
   }
 
-  const existedUser = await User.findOne({ $or: [{ username }, { email }] });
-  if (existedUser) {
-    throw new ApiError(409, "User with email or username already exists");
+  const existingByUsername = await User.findOne({ username });
+  if (existingByUsername) {
+    throw new ApiError(409, "Username is already taken. Please choose another one.");
   }
+
+  const existingByEmail = await User.findOne({ email });
+  if (existingByEmail) {
+    throw new ApiError(409, "An account with this email already exists. Try logging in.");
+  }
+
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -108,7 +114,13 @@ export const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong while registering the user");
   }
 
+  const jwtToken = generateJWTToken_username(createdUser);
+  const expiryDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const isProduction = process.env.NODE_ENV === "production";
+  res.cookie("accessToken", jwtToken, { httpOnly: true, expires: expiryDate, secure: isProduction, sameSite: isProduction ? "none" : "lax" });
+
   return res.status(201).json(new ApiResponse(201, createdUser, "User registered successfully"));
+
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
