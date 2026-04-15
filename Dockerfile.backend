@@ -1,0 +1,23 @@
+# Use an official Node.js runtime as a base image
+FROM node:20-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json to leverage Docker cache
+COPY Backend/package*.json ./
+
+# Install dependencies
+RUN npm install --production
+
+# Copy the rest of the application
+COPY Backend/ .
+
+# Remove any accidentally copied .env files or node_modules
+RUN rm -rf .env docker-compose.yml
+
+# Expose port (will be overridden by environment variable if provided)
+EXPOSE 8000
+
+# Run the Node.js application
+CMD ["node", "src/index.js"]
