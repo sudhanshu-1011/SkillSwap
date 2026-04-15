@@ -1,20 +1,16 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const UserContext = createContext();
 
+const PUBLIC_PATHS = ["/", "/login", "/register", "/about_us", "/discover", "/forgot-password"];
+
 const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    const handleUrlChange = () => {
-      // Your logic to run when there is a change in the URL
-      console.log("URL has changed:", window.location.href);
-    };
-    window.addEventListener("popstate", handleUrlChange);
     const userInfoString = localStorage.getItem("userInfo");
     if (userInfoString && userInfoString !== "undefined") {
       try {
@@ -23,19 +19,21 @@ const UserContextProvider = ({ children }) => {
       } catch (error) {
         console.error("Error parsing userInfo:", error);
         localStorage.removeItem("userInfo");
+        setUser(null);
       }
     } else {
-      const temp = window.location.href.split("/");
-      const url = temp.pop();
-      console.log("url", url);
-      if (url !== "about_us" && url !== "#why-skill-swap" && url !== "" && url !== "discover" && url !== "register") {
+      setUser(null);
+      const isPublic =
+        PUBLIC_PATHS.some((p) => location.pathname === p) ||
+        location.pathname.startsWith("/reset-password/") ||
+        location.pathname.startsWith("/profile/") ||
+        location.pathname.startsWith("/report/") ||
+        location.pathname.startsWith("/rating/");
+      if (!isPublic) {
         navigate("/login");
       }
     }
-    return () => {
-      window.removeEventListener("popstate", handleUrlChange);
-    };
-  }, [window.location.href]);
+  }, [location.pathname]);
 
   return <UserContext.Provider value={{ user, setUser }}>{children}</UserContext.Provider>;
 };

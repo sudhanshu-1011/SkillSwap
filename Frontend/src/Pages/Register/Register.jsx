@@ -10,11 +10,14 @@ import axios from "axios";
 import "./Register.css";
 import Badge from "react-bootstrap/Badge";
 import { v4 as uuidv4 } from "uuid";
+import { useUser } from "../../util/UserContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { setUser } = useUser();
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [isOAuth, setIsOAuth] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -77,21 +80,25 @@ const Register = () => {
         }
         setForm((prevState) => ({
           ...prevState,
-          name: data?.data?.name,
-          email: data?.data?.email,
-          username: data?.data?.username,
-          skillsProficientAt: data?.data?.skillsProficientAt,
-          skillsToLearn: data?.data?.skillsToLearn,
-          linkedinLink: data?.data?.linkedinLink,
-          githubLink: data?.data?.githubLink,
-          portfolioLink: data?.data?.portfolioLink,
+          name: data?.data?.name || "",
+          email: data?.data?.email || "",
+          username: data?.data?.username || "",
+          skillsProficientAt: data?.data?.skillsProficientAt || [],
+          skillsToLearn: data?.data?.skillsToLearn || [],
+          linkedinLink: data?.data?.linkedinLink || "",
+          githubLink: data?.data?.githubLink || "",
+          portfolioLink: data?.data?.portfolioLink || "",
           education: edu,
-          bio: data?.data?.bio,
+          bio: data?.data?.bio || "",
           projects: proj ? proj : prevState.projects,
         }));
+        if (data?.data?.email && data?.data?.name) {
+          setIsOAuth(true);
+        }
       } catch (error) {
         console.log("No pre-reg data found, assuming manual registration");
         setForm(prev => ({ ...prev, name: "", email: "" }));
+        setIsOAuth(false);
       } finally {
         setLoading(false);
       }
@@ -222,11 +229,11 @@ const Register = () => {
       toast.error("Email is required");
       return false;
     }
-    if (!form.password) {
+    if (!isOAuth && !form.password) {
       toast.error("Password is required for manual registration");
       return false;
     }
-    if (form.password.length < 6) {
+    if (!isOAuth && form.password.length < 6) {
       toast.error("Password must be at least 6 characters");
       return false;
     }
@@ -259,29 +266,30 @@ const Register = () => {
     return true;
   };
   const validateEduForm = () => {
+    let isValid = true;
     form.education.forEach((edu, index) => {
       if (!edu.institution) {
         toast.error(`Institution name is empty in education field ${index + 1}`);
-        return false;
+        isValid = false;
       }
       if (!edu.degree) {
-        toast.error("Degree is empty");
-        return false;
+        toast.error(`Degree is empty in education field ${index + 1}`);
+        isValid = false;
       }
       if (!edu.startDate) {
-        toast.error("Start date is empty");
-        return false;
+        toast.error(`Start date is empty in education field ${index + 1}`);
+        isValid = false;
       }
       if (!edu.endDate) {
-        toast.error("End date is empty");
-        return false;
+        toast.error(`End date is empty in education field ${index + 1}`);
+        isValid = false;
       }
       if (!edu.score) {
-        toast.error("Score is empty");
-        return false;
+        toast.error(`Score is empty in education field ${index + 1}`);
+        isValid = false;
       }
     });
-    return true;
+    return isValid;
   };
   const validateAddForm = () => {
     if (!form.bio) {
@@ -395,10 +403,12 @@ const Register = () => {
     if (check1 && check2 && check3) {
       setSaveLoading(true);
       try {
-        const { data } = await axios.post("/auth/register", form);
+        const endpoint = isOAuth ? "/user/registerUser" : "/auth/register";
+        const { data } = await axios.post(endpoint, form);
         toast.success("Registration Successful");
-        console.log("Data: ", data.data);
-        localStorage.setItem("userInfo", JSON.stringify(data.data));
+        const userData = data.data;
+        localStorage.setItem("userInfo", JSON.stringify(userData));
+        setUser(userData);
         navigate("/discover");
       } catch (error) {
         console.log(error);
@@ -442,7 +452,7 @@ const Register = () => {
                   onChange={handleInputChange}
                   className="form-control mb-2"
                   value={form.name}
-                  disabled={!!form.name && !form.password}
+                  disabled={isOAuth}
                 />
               </div>
               {/* Email */}
@@ -457,7 +467,7 @@ const Register = () => {
                   onChange={handleInputChange}
                   className="form-control mb-2"
                   value={form.email}
-                  disabled={!!form.email && !form.password}
+                  disabled={isOAuth}
                 />
               </div>
               {/* Password */}
@@ -574,7 +584,7 @@ const Register = () => {
               </div>
               {/* Skills to learn */}
               <div>
-                <label style={{ color: "#3BB4A1", marginTop: "20px" }}>Skills To Learn</label>
+                <label style={{ color: "var(--primary)", marginTop: "20px" }}>Skills To Learn</label>
                 <br />
                 <Form.Select
                   aria-label="Default select example"
@@ -635,7 +645,7 @@ const Register = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
@@ -652,7 +662,7 @@ const Register = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
@@ -669,7 +679,7 @@ const Register = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
@@ -688,7 +698,7 @@ const Register = () => {
                         onChange={(e) => handleEducationChange(e, index)}
                         style={{
                           borderRadius: "5px",
-                          border: "1px solid #3BB4A1",
+                          border: "1px solid var(--primary)",
                           padding: "5px",
                           width: "100%",
                         }}
@@ -706,7 +716,7 @@ const Register = () => {
                         onChange={(e) => handleEducationChange(e, index)}
                         style={{
                           borderRadius: "5px",
-                          border: "1px solid #3BB4A1",
+                          border: "1px solid var(--primary)",
                           padding: "5px",
                           width: "100%",
                         }}
@@ -724,7 +734,7 @@ const Register = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
@@ -767,7 +777,7 @@ const Register = () => {
             </Tab>
             <Tab eventKey="longer-tab" title="Additional">
               <div>
-                <label style={{ color: "#3BB4A1", marginTop: "20px" }}>Bio (Max 500 Character)</label>
+                <label style={{ color: "var(--primary)", marginTop: "20px" }}>Bio (Max 500 Character)</label>
                 <br />
                 <textarea
                   name="bio"
@@ -804,7 +814,7 @@ const Register = () => {
                       onChange={(e) => handleAdditionalChange(e, index)}
                       style={{
                         borderRadius: "5px",
-                        border: "1px solid #3BB4A1",
+                        border: "1px solid var(--primary)",
                         padding: "5px",
                         width: "100%",
                       }}
@@ -887,7 +897,7 @@ const Register = () => {
                           onChange={(e) => handleAdditionalChange(e, index)}
                           style={{
                             borderRadius: "5px",
-                            border: "1px solid #3BB4A1",
+                            border: "1px solid var(--primary)",
                             padding: "5px",
                             width: "100%",
                           }}
@@ -905,7 +915,7 @@ const Register = () => {
                           onChange={(e) => handleAdditionalChange(e, index)}
                           style={{
                             borderRadius: "5px",
-                            border: "1px solid #3BB4A1",
+                            border: "1px solid var(--primary)",
                             padding: "5px",
                             width: "100%",
                           }}
@@ -923,7 +933,7 @@ const Register = () => {
                       onChange={(e) => handleAdditionalChange(e, index)}
                       style={{
                         borderRadius: "5px",
-                        border: "1px solid #3BB4A1",
+                        border: "1px solid var(--primary)",
                         padding: "5px",
                         width: "100%",
                       }}
@@ -941,7 +951,7 @@ const Register = () => {
                       onChange={(e) => handleAdditionalChange(e, index)}
                       style={{
                         borderRadius: "5px",
-                        border: "1px solid #3BB4A1",
+                        border: "1px solid var(--primary)",
                         padding: "5px",
                         width: "100%",
                       }}
@@ -1129,7 +1139,7 @@ const Register = () => {
                   <button
                     onClick={handleSubmit}
                     style={{
-                      backgroundColor: "#3BB4A1",
+                      backgroundColor: "var(--primary)",
                       color: "white",
                       padding: "10px 20px",
                       border: "none",

@@ -52,17 +52,17 @@ const EditProfile = () => {
     if (user) {
       setForm((prevState) => ({
         ...prevState,
-        name: user?.name,
-        email: user?.email,
-        username: user?.username,
-        skillsProficientAt: user?.skillsProficientAt,
-        skillsToLearn: user?.skillsToLearn,
-        portfolioLink: user?.portfolioLink,
-        githubLink: user?.githubLink,
-        linkedinLink: user?.linkedinLink,
-        education: user?.education,
-        bio: user?.bio,
-        projects: user?.projects,
+        name: user?.name || "",
+        email: user?.email || "",
+        username: user?.username || "",
+        skillsProficientAt: user?.skillsProficientAt || [],
+        skillsToLearn: user?.skillsToLearn || [],
+        portfolioLink: user?.portfolioLink || "",
+        githubLink: user?.githubLink || "",
+        linkedinLink: user?.linkedinLink || "",
+        education: user?.education || [],
+        bio: user?.bio || "",
+        projects: user?.projects || [],
       }));
       setTechStack(user?.projects.map((project) => "Select some Tech Stack"));
     }
@@ -86,12 +86,7 @@ const EditProfile = () => {
       toast.success("Pic uploaded successfully");
       // setPic(response.data.data.url);
       console.log("Pic url:", response.data);
-      setForm(() => {
-        return {
-          ...form,
-          picture: response.data.data.url,
-        };
-      });
+      setForm(prev => ({ ...prev, picture: response.data.data.url }));
     } catch (error) {
       console.log(error);
       if (error?.response?.data?.message) {
@@ -247,29 +242,30 @@ const EditProfile = () => {
     return true;
   };
   const validateEduForm = () => {
+    let isValid = true;
     form.education.forEach((edu, index) => {
       if (!edu.institution) {
         toast.error(`Institution name is empty in education field ${index + 1}`);
-        return false;
+        isValid = false;
       }
       if (!edu.degree) {
-        toast.error("Degree is empty");
-        return false;
+        toast.error(`Degree is empty in education field ${index + 1}`);
+        isValid = false;
       }
       if (!edu.startDate) {
-        toast.error("Start date is empty");
-        return false;
+        toast.error(`Start date is empty in education field ${index + 1}`);
+        isValid = false;
       }
       if (!edu.endDate) {
-        toast.error("End date is empty");
-        return false;
+        toast.error(`End date is empty in education field ${index + 1}`);
+        isValid = false;
       }
       if (!edu.score) {
-        toast.error("Score is empty");
-        return false;
+        toast.error(`Score is empty in education field ${index + 1}`);
+        isValid = false;
       }
     });
-    return true;
+    return isValid;
   };
   const validateAddForm = () => {
     if (!form.bio) {
@@ -407,7 +403,7 @@ const EditProfile = () => {
 
   return (
     <div className="register_page ">
-      <h1 className="m-4" style={{ fontFamily: "Oswald", color: "#3BB4A1" }}>
+      <h1 className="m-4" style={{ fontFamily: "Oswald", color: "var(--primary)" }}>
         Update Profile Details
       </h1>
       {loading ? (
@@ -426,7 +422,7 @@ const EditProfile = () => {
             <Tab eventKey="registration" title="Registration">
               {/* Name */}
               <div>
-                <label style={{ color: "#3BB4A1" }}>Name</label>
+                <label style={{ color: "var(--primary)" }}>Name</label>
                 <br />
                 <input
                   type="text"
@@ -434,7 +430,7 @@ const EditProfile = () => {
                   onChange={handleInputChange}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                   }}
@@ -443,13 +439,13 @@ const EditProfile = () => {
                 />
               </div>
               <div className="mt-3">
-                <label style={{ color: "#3BB4A1" }}>Profile Photo</label>
+                <label style={{ color: "var(--primary)" }}>Profile Photo</label>
                 <br />
                 <input type="file" accept="image/*" onChange={handleFileChange} />
               </div>
               {/* Email */}
               <div>
-                <label className="mt-3" style={{ color: "#3BB4A1" }}>
+                <label className="mt-3" style={{ color: "var(--primary)" }}>
                   Email
                 </label>
                 <br />
@@ -459,7 +455,7 @@ const EditProfile = () => {
                   onChange={handleInputChange}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                   }}
@@ -469,7 +465,7 @@ const EditProfile = () => {
               </div>
               {/* Username */}
               <div>
-                <label className="mt-3" style={{ color: "#3BB4A1" }}>
+                <label className="mt-3" style={{ color: "var(--primary)" }}>
                   Username
                 </label>
                 <br />
@@ -480,7 +476,7 @@ const EditProfile = () => {
                   value={form.username}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                   }}
@@ -489,7 +485,7 @@ const EditProfile = () => {
               </div>
               {/* Linkedin Profile Link*/}
               <div>
-                <label className="mt-3" style={{ color: "#3BB4A1" }}>
+                <label className="mt-3" style={{ color: "var(--primary)" }}>
                   Linkedin Link
                 </label>
                 <br />
@@ -500,7 +496,7 @@ const EditProfile = () => {
                   onChange={handleInputChange}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                   }}
@@ -509,7 +505,7 @@ const EditProfile = () => {
               </div>
               {/* Github Profile Link*/}
               <div>
-                <label className="mt-3" style={{ color: "#3BB4A1" }}>
+                <label className="mt-3" style={{ color: "var(--primary)" }}>
                   Github Link
                 </label>
                 <br />
@@ -520,7 +516,7 @@ const EditProfile = () => {
                   onChange={handleInputChange}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                   }}
@@ -529,7 +525,7 @@ const EditProfile = () => {
               </div>
               {/* Portfolio Link */}
               <div>
-                <label className="mt-3" style={{ color: "#3BB4A1" }}>
+                <label className="mt-3" style={{ color: "var(--primary)" }}>
                   Portfolio Link
                 </label>
                 <br />
@@ -540,7 +536,7 @@ const EditProfile = () => {
                   onChange={handleInputChange}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                   }}
@@ -549,7 +545,7 @@ const EditProfile = () => {
               </div>
               {/* Skills Proficient At */}
               <div>
-                <label className="mt-3" style={{ color: "#3BB4A1" }}>
+                <label className="mt-3" style={{ color: "var(--primary)" }}>
                   Skills Proficient At
                 </label>
                 <br />
@@ -586,7 +582,7 @@ const EditProfile = () => {
               </div>
               {/* Skills to learn */}
               <div>
-                <label style={{ color: "#3BB4A1", marginTop: "20px" }}>Skills To Learn</label>
+                <label style={{ color: "var(--primary)", marginTop: "20px" }}>Skills To Learn</label>
                 <br />
                 <Form.Select
                   aria-label="Default select example"
@@ -638,7 +634,7 @@ const EditProfile = () => {
                       </button>
                     </span>
                   )}
-                  <label style={{ color: "#3BB4A1" }}>Institution Name</label>
+                  <label style={{ color: "var(--primary)" }}>Institution Name</label>
                   <br />
                   <input
                     type="text"
@@ -647,13 +643,13 @@ const EditProfile = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
                     placeholder="Enter your institution name"
                   />
-                  <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                  <label className="mt-2" style={{ color: "var(--primary)" }}>
                     Degree
                   </label>
                   <br />
@@ -664,13 +660,13 @@ const EditProfile = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
                     placeholder="Enter your degree"
                   />
-                  <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                  <label className="mt-2" style={{ color: "var(--primary)" }}>
                     Grade/Percentage
                   </label>
                   <br />
@@ -681,7 +677,7 @@ const EditProfile = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
@@ -689,7 +685,7 @@ const EditProfile = () => {
                   />
                   <div className="row w-100">
                     <div className="col-md-6">
-                      <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                      <label className="mt-2" style={{ color: "var(--primary)" }}>
                         Start Date
                       </label>
                       <br />
@@ -700,14 +696,14 @@ const EditProfile = () => {
                         onChange={(e) => handleEducationChange(e, index)}
                         style={{
                           borderRadius: "5px",
-                          border: "1px solid #3BB4A1",
+                          border: "1px solid var(--primary)",
                           padding: "5px",
                           width: "100%",
                         }}
                       />
                     </div>
                     <div className="col-md-6">
-                      <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                      <label className="mt-2" style={{ color: "var(--primary)" }}>
                         End Date
                       </label>
                       <br />
@@ -718,14 +714,14 @@ const EditProfile = () => {
                         onChange={(e) => handleEducationChange(e, index)}
                         style={{
                           borderRadius: "5px",
-                          border: "1px solid #3BB4A1",
+                          border: "1px solid var(--primary)",
                           padding: "5px",
                           width: "100%",
                         }}
                       />
                     </div>
                   </div>
-                  <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                  <label className="mt-2" style={{ color: "var(--primary)" }}>
                     Description
                   </label>
                   <br />
@@ -736,7 +732,7 @@ const EditProfile = () => {
                     onChange={(e) => handleEducationChange(e, index)}
                     style={{
                       borderRadius: "5px",
-                      border: "1px solid #3BB4A1",
+                      border: "1px solid var(--primary)",
                       padding: "5px",
                       width: "100%",
                     }}
@@ -779,7 +775,7 @@ const EditProfile = () => {
             </Tab>
             <Tab eventKey="longer-tab" title="Additional">
               <div>
-                <label style={{ color: "#3BB4A1", marginTop: "20px" }}>Bio (Max 500 Character)</label>
+                <label style={{ color: "var(--primary)", marginTop: "20px" }}>Bio (Max 500 Character)</label>
                 <br />
                 <textarea
                   name="bio"
@@ -787,7 +783,7 @@ const EditProfile = () => {
                   onChange={handleInputChange}
                   style={{
                     borderRadius: "5px",
-                    border: "1px solid #3BB4A1",
+                    border: "1px solid var(--primary)",
                     padding: "5px",
                     width: "100%",
                     marginBottom: "10px",
@@ -796,7 +792,7 @@ const EditProfile = () => {
                 ></textarea>
               </div>
               <div className="">
-                <label style={{ color: "#3BB4A1" }}>Projects</label>
+                <label style={{ color: "var(--primary)" }}>Projects</label>
 
                 {form?.projects?.map((project, index) => (
                   <div className="border border-dark rounded-1 p-3 m-1" key={project?._id}>
@@ -813,7 +809,7 @@ const EditProfile = () => {
                         cross
                       </button>
                     </span>
-                    <label style={{ color: "#3BB4A1" }}>Title</label>
+                    <label style={{ color: "var(--primary)" }}>Title</label>
                     <br />
                     <input
                       type="text"
@@ -822,13 +818,13 @@ const EditProfile = () => {
                       onChange={(e) => handleAdditionalChange(e, index)}
                       style={{
                         borderRadius: "5px",
-                        border: "1px solid #3BB4A1",
+                        border: "1px solid var(--primary)",
                         padding: "5px",
                         width: "100%",
                       }}
                       placeholder="Enter your project title"
                     />
-                    <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                    <label className="mt-2" style={{ color: "var(--primary)" }}>
                       Tech Stack
                     </label>
                     <br />
@@ -894,7 +890,7 @@ const EditProfile = () => {
                     </button>
                     <div className="row">
                       <div className="col-md-6">
-                        <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                        <label className="mt-2" style={{ color: "var(--primary)" }}>
                           Start Date
                         </label>
                         <br />
@@ -905,14 +901,14 @@ const EditProfile = () => {
                           onChange={(e) => handleAdditionalChange(e, index)}
                           style={{
                             borderRadius: "5px",
-                            border: "1px solid #3BB4A1",
+                            border: "1px solid var(--primary)",
                             padding: "5px",
                             width: "100%",
                           }}
                         />
                       </div>
                       <div className="col-md-6">
-                        <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                        <label className="mt-2" style={{ color: "var(--primary)" }}>
                           End Date
                         </label>
                         <br />
@@ -923,14 +919,14 @@ const EditProfile = () => {
                           onChange={(e) => handleAdditionalChange(e, index)}
                           style={{
                             borderRadius: "5px",
-                            border: "1px solid #3BB4A1",
+                            border: "1px solid var(--primary)",
                             padding: "5px",
                             width: "100%",
                           }}
                         />
                       </div>
                     </div>
-                    <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                    <label className="mt-2" style={{ color: "var(--primary)" }}>
                       Project Link
                     </label>
                     <br />
@@ -941,14 +937,14 @@ const EditProfile = () => {
                       onChange={(e) => handleAdditionalChange(e, index)}
                       style={{
                         borderRadius: "5px",
-                        border: "1px solid #3BB4A1",
+                        border: "1px solid var(--primary)",
                         padding: "5px",
                         width: "100%",
                       }}
                       placeholder="Enter your project link"
                     />
 
-                    <label className="mt-2" style={{ color: "#3BB4A1" }}>
+                    <label className="mt-2" style={{ color: "var(--primary)" }}>
                       Description
                     </label>
                     <br />
@@ -959,7 +955,7 @@ const EditProfile = () => {
                       onChange={(e) => handleAdditionalChange(e, index)}
                       style={{
                         borderRadius: "5px",
-                        border: "1px solid #3BB4A1",
+                        border: "1px solid var(--primary)",
                         padding: "5px",
                         width: "100%",
                       }}
@@ -1007,7 +1003,7 @@ const EditProfile = () => {
             </Tab>
             {/* <Tab eventKey="Preview" title="Confirm Details">
               <div>
-                <h3 style={{ color: "#3BB4A1", marginBottom: "20px" }} className="link w-100 text-center">
+                <h3 style={{ color: "var(--primary)", marginBottom: "20px" }} className="link w-100 text-center">
                   Preview of the Form
                 </h3>
                 <div
@@ -1024,7 +1020,7 @@ const EditProfile = () => {
                     }}
                     className="link m-sm-0"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Name:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Name:</span>
                     <span style={{ flex: 2 }}>{form.name || "Yet to be filled"}</span>
                   </div>
                   <div
@@ -1037,7 +1033,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Email ID:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Email ID:</span>
                     <span style={{ flex: 2 }}>{form.email || "Yet to be filled"}</span>
                   </div>
                   <div
@@ -1050,7 +1046,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Username:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Username:</span>
                     <span style={{ flex: 2 }}>{form.username || "Yet to be filled"}</span>
                   </div>
                   <div
@@ -1063,7 +1059,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Portfolio Link:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Portfolio Link:</span>
                     <span style={{ flex: 2 }}>{form.portfolioLink || "Yet to be filled"}</span>
                   </div>
                   <div
@@ -1076,7 +1072,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Github Link:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Github Link:</span>
                     <span style={{ flex: 2 }}>{form.githubLink || "Yet to be filled"}</span>
                   </div>
                   <div
@@ -1090,7 +1086,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Linkedin Link:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Linkedin Link:</span>
                     <span
                       style={{
                         width: "70vw",
@@ -1115,7 +1111,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Skills Proficient At:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Skills Proficient At:</span>
                     <span style={{ flex: 2 }}>{form?.skillsProficientAt?.join(", ") || "Yet to be filled"}</span>
                   </div>
                   <div
@@ -1128,7 +1124,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Skills To Learn:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Skills To Learn:</span>
                     <span style={{ flex: 2 }}>{form?.skillsToLearn?.join(", ") || "Yet to be filled"}</span>
                   </div>
 
@@ -1142,7 +1138,7 @@ const EditProfile = () => {
                     }}
                     className="link"
                   >
-                    <span style={{ flex: 1, fontWeight: "bold", color: "#3BB4A1" }}>Bio:</span>
+                    <span style={{ flex: 1, fontWeight: "bold", color: "var(--primary)" }}>Bio:</span>
                     <span style={{ flex: 2 }}>{form?.bio || "Yet to be filled"}</span>
                   </div>
                 </div>
@@ -1150,7 +1146,7 @@ const EditProfile = () => {
                   <button
                     onClick={handleSubmit}
                     style={{
-                      backgroundColor: "#3BB4A1",
+                      backgroundColor: "var(--primary)",
                       color: "white",
                       padding: "10px 20px",
                       border: "none",

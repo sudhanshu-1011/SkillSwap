@@ -3,22 +3,22 @@
   --primary: #4F46E5;
   --primary-hover: #4338CA;
   --primary-glow: rgba(79, 70, 229, 0.4);
-  
+
   --secondary: #10B981;
   --secondary-glow: rgba(16, 185, 129, 0.4);
-  
+
   --accent: #8b5cf6;
-  
+
   /* Backgrounds */
   --bg-main: #0f172a;
   --bg-surface: #1e293b;
   --bg-card: rgba(30, 41, 59, 0.7);
   --bg-glass: rgba(255, 255, 255, 0.03);
-  
+
   /* Borders */
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-glass: rgba(255, 255, 255, 0.12);
-  
+
   /* Text */
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
@@ -35,7 +35,13 @@
   --radius-xl: 24px;
 }
 
-/* Bootstrap Theme Overrides */
+/* ═══════════════════════════════════════
+   BASE RESETS
+═══════════════════════════════════════ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 body {
   background-color: var(--bg-main) !important;
   color: var(--text-main) !important;
@@ -44,7 +50,8 @@ body {
   overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
   font-family: var(--font-display) !important;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -56,8 +63,11 @@ a {
   transition: var(--transition-smooth);
 }
 
-/* Universal Input Overrides */
-input, textarea, select, .form-control, .form-select {
+/* ═══════════════════════════════════════
+   UNIVERSAL FORM OVERRIDES (Bootstrap)
+═══════════════════════════════════════ */
+input, textarea, select,
+.form-control, .form-select {
   background-color: var(--bg-surface) !important;
   border: 1px solid var(--border-glass) !important;
   color: var(--text-main) !important;
@@ -65,18 +75,94 @@ input, textarea, select, .form-control, .form-select {
   transition: var(--transition-smooth);
 }
 
-input:focus, textarea:focus, select:focus, .form-control:focus, .form-select:focus {
+input:focus, textarea:focus, select:focus,
+.form-control:focus, .form-select:focus {
   background-color: var(--bg-surface) !important;
   border-color: var(--primary) !important;
   box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15) !important;
   color: var(--text-main) !important;
+  outline: none;
 }
 
 input::placeholder, textarea::placeholder {
   color: var(--text-dark) !important;
 }
 
-/* Glassmorphism Classes */
+/* Date/Time inputs calendar icon color fix */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.7);
+}
+
+/* File input */
+input[type="file"] {
+  color: var(--text-muted) !important;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════
+   BOOTSTRAP TABS — DARK THEME OVERRIDE
+═══════════════════════════════════════ */
+.nav-tabs {
+  border-bottom: 1px solid var(--border-glass) !important;
+  gap: 4px;
+}
+
+.nav-tabs .nav-item .nav-link {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--text-muted) !important;
+  font-family: var(--font-main) !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+  padding: 10px 20px;
+  transition: var(--transition-smooth);
+}
+
+.nav-tabs .nav-item .nav-link:hover {
+  color: var(--text-main) !important;
+  border-color: var(--border-glass) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.nav-tabs .nav-item .nav-link.active {
+  background: rgba(79, 70, 229, 0.15) !important;
+  border-color: var(--primary) var(--primary) var(--bg-main) !important;
+  color: var(--primary) !important;
+}
+
+.tab-content {
+  background: transparent !important;
+  color: var(--text-main) !important;
+  padding-top: 16px;
+}
+
+/* ═══════════════════════════════════════
+   BOOTSTRAP BADGES OVERRIDE
+═══════════════════════════════════════ */
+.badge.bg-secondary {
+  background: rgba(79, 70, 229, 0.2) !important;
+  color: var(--primary) !important;
+  border: 1px solid rgba(79, 70, 229, 0.3) !important;
+  font-size: 0.82rem;
+  font-weight: 500;
+  border-radius: 8px;
+  padding: 5px 10px;
+}
+
+/* ═══════════════════════════════════════
+   BOOTSTRAP SPINNER OVERRIDE
+═══════════════════════════════════════ */
+.spinner-border.text-primary,
+.spinner-border {
+  color: var(--primary) !important;
+}
+
+/* ═══════════════════════════════════════
+   GLASSMORPHISM UTILITIES
+═══════════════════════════════════════ */
 .glass {
   background: var(--bg-glass);
   backdrop-filter: blur(12px);
@@ -101,7 +187,9 @@ input::placeholder, textarea::placeholder {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
-/* Utility Classes */
+/* ═══════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+═══════════════════════════════════════ */
 .text-gradient {
   background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
@@ -113,8 +201,15 @@ input::placeholder, textarea::placeholder {
   color: var(--text-muted) !important;
 }
 
-/* Custom Buttons */
-.btn-primary, .btn-primary:active, .btn-primary:focus {
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn-primary,
+.btn-primary:active,
+.btn-primary:focus,
+.btn.btn-primary,
+.btn.btn-primary:active,
+.btn.btn-primary:focus {
   background: linear-gradient(135deg, var(--primary), var(--primary-hover)) !important;
   border: none !important;
   color: #fff !important;
@@ -123,29 +218,78 @@ input::placeholder, textarea::placeholder {
   font-weight: 600;
   box-shadow: 0 4px 15px var(--primary-glow) !important;
   transition: var(--transition-smooth) !important;
+  cursor: pointer;
 }
 
-.btn-primary:hover {
+.btn-primary:hover,
+.btn.btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px var(--primary-glow) !important;
   opacity: 0.95;
 }
 
-.btn-secondary {
+.btn-primary:disabled,
+.btn.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-secondary,
+.btn.btn-secondary,
+.btn.btn-secondary:active,
+.btn.btn-secondary:focus {
   background: var(--bg-surface) !important;
   border: 1px solid var(--border-glass) !important;
   color: var(--text-main) !important;
   transition: var(--transition-smooth) !important;
+  border-radius: var(--radius-md) !important;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.btn-secondary:hover {
-  background: rgba(255,255,255,0.1) !important;
-  border-color: rgba(255,255,255,0.2) !important;
+.btn-secondary:hover,
+.btn.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Custom Scrollbar */
+.btn-warning,
+.btn.btn-warning,
+.btn.btn-warning:active {
+  background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+  border: none !important;
+  color: #fff !important;
+  font-weight: 600;
+  border-radius: var(--radius-md) !important;
+  transition: var(--transition-smooth) !important;
+  cursor: pointer;
+}
+
+.btn-warning:hover,
+.btn.btn-warning:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3) !important;
+}
+
+/* ═══════════════════════════════════════
+   FORM LABEL UTILITY
+═══════════════════════════════════════ */
+.form-label,
+label {
+  color: var(--text-muted) !important;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+
+/* ═══════════════════════════════════════
+   CUSTOM SCROLLBAR
+═══════════════════════════════════════ */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-main);
@@ -158,7 +302,9 @@ input::placeholder, textarea::placeholder {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Animations */
+/* ═══════════════════════════════════════
+   ANIMATIONS
+═══════════════════════════════════════ */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
@@ -167,4 +313,182 @@ input::placeholder, textarea::placeholder {
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px var(--primary-glow); }
+  50% { box-shadow: 0 0 40px var(--primary-glow), 0 0 60px rgba(79,70,229,0.2); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+/* ═══════════════════════════════════════
+   REGISTER / EDIT PROFILE PAGE WRAPPER
+═══════════════════════════════════════ */
+.register_page {
+  min-height: 100vh;
+  background: var(--bg-main);
+  padding: 120px 20px 60px;
+}
+
+.register_section {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  backdrop-filter: blur(10px);
+}
+
+/* Education / Project card within forms */
+.edu-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.edu-card-remove {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-radius: var(--radius-md);
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.edu-card-remove:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+/* Section row actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+/* ═══════════════════════════════════════
+   STAR RATING
+═══════════════════════════════════════ */
+.star-rating-row {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+
+.star-icon {
+  font-size: 2.2rem;
+  cursor: pointer;
+  color: var(--text-dark);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.star-icon:hover,
+.star-icon.filled {
+  color: #f59e0b;
+  transform: scale(1.1);
+}
+
+/* ═══════════════════════════════════════
+   RADIO GROUP (Report page)
+═══════════════════════════════════════ */
+.radio-group-custom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 8px 0;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.radio-option:hover {
+  border-color: var(--primary);
+  background: rgba(79, 70, 229, 0.05);
+}
+
+.radio-option.selected {
+  border-color: var(--primary);
+  background: rgba(79, 70, 229, 0.1);
+}
+
+.radio-option input[type="radio"] {
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  accent-color: var(--primary);
+  border: none !important;
+  background: none !important;
+  flex-shrink: 0;
+}
+
+.radio-option label {
+  margin: 0 !important;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main) !important;
+}
+
+/* ═══════════════════════════════════════
+   PROFILE CARD (Discover)
+═══════════════════════════════════════ */
+.profile-card-wrapper {
+  width: 100%;
+  max-width: 320px;
+}
+
+/* ═══════════════════════════════════════
+   TOAST OVERRIDE
+═══════════════════════════════════════ */
+.Toastify__toast {
+  background: var(--bg-surface) !important;
+  color: var(--text-main) !important;
+  border: 1px solid var(--border-glass) !important;
+  border-radius: var(--radius-md) !important;
+  font-family: var(--font-main) !important;
+}
+
+.Toastify__toast--success {
+  border-left: 3px solid var(--secondary) !important;
+}
+
+.Toastify__toast--error {
+  border-left: 3px solid #ef4444 !important;
+}
+
+.Toastify__toast--info {
+  border-left: 3px solid var(--primary) !important;
+}
+
+.Toastify__progress-bar--success {
+  background: var(--secondary) !important;
+}
+
+.Toastify__close-button {
+  color: var(--text-muted) !important;
 }
