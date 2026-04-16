@@ -14,7 +14,8 @@ const Login = () => {
   const { setUser } = useUser();
 
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_SERVER_URL}/auth/google`;
+    const baseURL = import.meta.env.DEV ? import.meta.env.VITE_LOCALHOST : import.meta.env.VITE_SERVER_URL;
+    window.location.href = `${baseURL}/auth/google`;
   };
 
   const handleEmailLogin = async (e) => {

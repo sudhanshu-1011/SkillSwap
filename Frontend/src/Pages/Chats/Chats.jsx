@@ -25,8 +25,10 @@ const Chats = () => {
   const [scheduleForm, setScheduleForm] = useState({ date: "", time: "" });
 
   useEffect(() => {
-    fetchChats();
-  }, []);
+    if (user) {
+      fetchChats();
+    }
+  }, [user]);
 
   useEffect(() => {
     socket = io(axios.defaults.baseURL);
