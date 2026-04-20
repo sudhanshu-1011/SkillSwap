@@ -26,7 +26,7 @@ const NotificationCenter = () => {
   const handleAction = async (requestId, action) => {
     try {
       const endpoint = action === 'accept' ? '/request/acceptRequest' : '/request/rejectRequest';
-      const { data } = await axios.post(endpoint, { requestID: requestId });
+      const { data } = await axios.post(endpoint, { requestId: requestId });
       toast.success(data.message);
       fetchRequests();
     } catch (error) {
@@ -104,9 +104,9 @@ const NotificationCenter = () => {
                     border: '1px solid var(--border-glass)'
                   }}>
                     <div style={{ display: 'flex', gap: '12px', marginBottom: '10px' }}>
-                      <img src={req.sender.picture} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%' }} />
+                      <img src={req.sender?.picture || "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                       <div>
-                        <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600' }}>{req.sender.name}</p>
+                        <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: '600' }}>{req.sender?.name || "Unknown User"}</p>
                         <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>wants to swap skills</p>
                       </div>
                     </div>
